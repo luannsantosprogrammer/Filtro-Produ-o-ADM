@@ -6,8 +6,8 @@ import requests
 import json
 from datetime import datetime
 # URL do Google Sheets
-url3 = "https://docs.google.com/spreadsheets/d/1n22edpE9NSH31uixN04yuqKWvSjbstqE8gy8-QZXV-k/export?format=csv"
-
+url_nomes = "https://docs.google.com/spreadsheets/d/1n22edpE9NSH31uixN04yuqKWvSjbstqE8gy8-QZXV-k/export?format=csv"
+url_dados = "https://docs.google.com/spreadsheets/d/18hTUSA2ybmXgt0X73-04lvTZvj5YEu5CEDquKk7xB3w/export?format=csv"
 # Função para exibir a barra de progresso
 
 def barra(valores):
@@ -18,23 +18,27 @@ def barra(valores):
 
 # Função para obter os dados e processar
 def get():
-    dados = pd.read_csv(url3)
+    dados = pd.read_csv(url_dados)
+    dados_alterados = dados.fillna('')
     # Seleciona colunas de interesse e remove valores ausentes
-    todos_dados = dados[['APARELHOS', 'CALCULOS']].head(31).dropna()
+    # todos_dados = dados[['APARELHOS', 'CALCULOS']].head(31).dropna()
     
-    # Loop para processar cada linha
-    with st.sidebar:
-        st.sidebar.header("")
-        for _, row in todos_dados.iterrows():
-            aparelho = row['APARELHOS']
-            calculos = int(row['CALCULOS'])  # Garante que seja inteiro
+    # # Loop para processar cada linha
+    # with st.sidebar:
+    #     st.sidebar.header("")
+    #     for _, row in todos_dados.iterrows():
+    #         aparelho = row['APARELHOS']
+    #         calculos = int(row['CALCULOS'])  # Garante que seja inteiro
             
-            # Exibe o nome do aparelho
-            st.markdown(f"### {aparelho}")
+    #         # Exibe o nome do aparelho
+    #         st.markdown(f"### {aparelho}")
             
-            # Executa a barra de progresso
-            barra(calculos)
-            st.header(calculos, divider=True)
+    #         # Executa a barra de progresso
+    #         barra(calculos)
+    #         st.header(calculos, divider=True)
+    tcol1, tcol2, tcol3 = st.columns([1,2,1])
+    with tcol1,tcol2:
+        st.dataframe(dados_alterados[['TESTE',	'CALCULOS','LIMPEZA','CALCULOS.1',	'TRANSAÇÃO',	'CALCULOS.2']])
 
 
 def post(nome,inicio,fim):
@@ -65,17 +69,34 @@ def post(nome,inicio,fim):
 
 # Configuração da página
 st.set_page_config(layout="wide")
+st.markdown('<h1 style="text-align:center; color: white";font-size: 90px;>LABORATÓRIO DE EQUIPAMENTOS</h1>', unsafe_allow_html=True)
 post('','','')
 time.sleep(3)
 # Estilo customizado
 style = '''
 <style>
 
-
+.main {
+        background-color: #ff5022; /* Escolha a cor desejada */
+    }
 .st-emotion-cache-6qob1r{
 width: 100hv;
 }
-
+.stDataFrame{
+float: center;
+}
+.dataframe-container {
+    display: flex;
+    align-itens: center;
+    width: 100%;
+}
+.dataframe-container table {
+    font-size: 30px; /* Aumentar o tamanho da fonte */
+    width: 100%;
+}
+label{
+font-size: 70px;
+}
 </style>
 '''
 st.markdown(style, unsafe_allow_html=True)
@@ -94,7 +115,7 @@ with col2:
     fim = st.date_input(label="FIM", format="DD/MM/YYYY")
 
 # Obtendo os nomes do Google Sheets
-nomes = pd.read_csv(url3)
+nomes = pd.read_csv(url_nomes)
 lista = [''] + [nome[0] for nome in nomes.values.tolist()]
 
 # Dropdown para selecionar o nome
@@ -109,7 +130,7 @@ if lista_nomes:
 
     
     post(lista_nomes,novo_inicio,novo_fim)
-    time.sleep(11)
+    time.sleep(7)
     get()
                 
 
