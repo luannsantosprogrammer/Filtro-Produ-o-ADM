@@ -130,7 +130,7 @@ if lista_nomes:
 
     
     post(lista_nomes,novo_inicio,novo_fim)
-    time.sleep(7)
+    time.sleep(2)
     get()
                 
 
